@@ -20,16 +20,16 @@ def createBook():
     book.save('./staticFiles/currentBookTest.pdf')
     return controller.saveHDFS('./staticFiles/currentBookTest.pdf')
 
-@app.route('/words', methods=['GET','DELETE'])
-def countWords():
-     if request.method == 'POST':
-         return 
-     else:
-         return controller.test()
+# @app.route('/words', methods=['GET','DELETE'])
+# def countWords():
+#      if request.method == 'POST':
+#          return 
+#      else:
+#          return controller.test()
 
-@app.route('/words', methods=['DELETE'])
-def deleteBook():
-    pass
+# @app.route('/words', methods=['DELETE'])
+# def deleteBook():
+#     pass
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

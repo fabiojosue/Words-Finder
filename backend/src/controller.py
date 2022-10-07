@@ -47,27 +47,28 @@ def loadIntoImpala():
     cursor.execute("load data inpath 'hdfs://172.17.0.01:9000/tmp/csv/" + txtFile + "'" + " overwrite into table bd2.book ;") 
 
     cursor.close()
-    conn.close()   
+    conn.close()
 
-# # select call
-# # cursor.execute("Select * from db2.book") 
-# # for row in cursor:
-# #     print(row)
+def countWord():
+    conn = connect(host = "172.17.0.1", port = 21050)
+    cursor = conn.cursor()
 
-# #insert call
-# cursor.execute("insert into db2.book (name) values('{f}')") 
+    cursor.execute("select count(*) from bd2.book where word='este';")
+    return {"word":cursor.next()[0]} 
 
+def countTotalWord():
+    result = countWord()
 
+    conn = connect(host = "172.17.0.1", port = 21050)
+    cursor = conn.cursor()
+
+    cursor.execute("select count(*) from bd2.book;")
+    return result | {"totalWords":cursor.next()[0]} 
 
 def saveHDFS(file):
     pdfToTxt(file)
     run_cmd(['hdfs', 'dfs', '-put', '/home/fabio/bd2-impala/Words-Finder/backend/src/staticFiles/' + txtFile, '/tmp/csv'])
     loadIntoImpala()
-    return{"Success":True}
+    countWord()
+    return countTotalWord()
 
-
-def test():
-    return {
-        "Total": 10,
-        "hola":10
-    }
