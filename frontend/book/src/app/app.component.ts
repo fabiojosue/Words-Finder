@@ -2,8 +2,11 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  template: `
+    <!-- routes to other pages -->
+    <router-outlet></router-outlet>
+  `,
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'book';

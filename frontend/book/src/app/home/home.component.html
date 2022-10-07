@@ -1,0 +1,42 @@
+<!-- <div class="container p-5">
+    <form class="row g-3" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="col-md-12">
+        <label for="inputEmail4" class="form-label">Image Upload</label>
+        <input (change)="onImageChangeFromFile($event)" type="file" formControlName="imageInput" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.imageInput.errors }"  id="inputEmail4">
+        <div *ngIf="submitted && f.imageInput.errors" class="invalid-feedback">
+          <div *ngIf="f.imageInput.errors.required">JPG Image is required</div>
+          
+       </div>
+      </div>
+      
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Sign in</button>
+      </div>
+    </form>
+  </div> -->
+<body>
+    <div class="background">
+        <div id="container">
+          <div id="content" class="shadow-lg p-3 mb-5 bg-white rounded">
+            <h1 class="d-flex justify-content-center">Interact with a Book!</h1>
+            <h2 class="d-flex justify-content-center">1. Choose a PDF file!</h2>
+            <div class="d-flex justify-content-center bar">
+                <!-- <input class="choose" type="file" id="photo1" (change)="getFile($event)">
+                <label class="choose custom-file-label" for="photo1">{{photoName1}}</label> -->
+                <input (change)="onImageChangeFromFile($event)" type="file" formControlName="imageInput" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.imageInput.errors }"  id="inputEmail4">
+                <div *ngIf="submitted && f.imageInput.errors" class="invalid-feedback"></div>
+            </div>
+            <h2 class="d-flex justify-content-center">2. Count word in Book!</h2>
+            <div class="d-flex justify-content-center input-group mb-3  word">
+                <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" placeholder="Type word">
+              </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary "><h4>Search</h4></button>
+            </div>
+            
+            <div *ngIf="f.imageInput.errors.required">JPG Image is required</div>
+          </div>
+        </div>
+      </div>
+</body>
+

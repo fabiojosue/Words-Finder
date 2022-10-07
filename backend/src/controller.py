@@ -9,8 +9,7 @@ from impala.dbapi import connect
 # 2.Save file in HDFS
 # 3.Load HDFS file into Impala Table
 ####################################
-fileNumber = 0
-txtFile = 'currentBookTest' + str(fileNumber) + '.txt'
+txtFile = 'currentBookTest.txt'
 
 def pdfToTxt(file):
     pdfReader = PyPDF2.PdfFileReader(open(file,'rb'))
@@ -22,7 +21,7 @@ def pdfToTxt(file):
     with open('./staticFiles/' + txtFile, 'w') as f:
         for i in range(len(text)):
             if text[i] not in specialCharacters :
-                f.write(text[i])
+                f.write(text[i].lower())
             else:
                 f.write("\n")
     
