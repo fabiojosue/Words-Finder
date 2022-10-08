@@ -9,21 +9,30 @@ from impala.dbapi import connect
 # 2.Save file in HDFS
 # 3.Load HDFS file into Impala Table
 ####################################
-txtFile = 'currentBookTest.txt'
+txtFile = 'currentBook.txt'
 
 def pdfToTxt(file):
+    specialCharacters = [
+                        " ",",",".",":",";",
+                        "(",")","!","¡","¿",
+                        "?","_","-","'","–",
+                        "\"","\n","\t","•","”"
+                        ]
     pdfReader = PyPDF2.PdfFileReader(open(file,'rb'))
     numPages = pdfReader.numPages
-    currentPage = pdfReader.getPage(numPages-1)
-    text = currentPage.extractText()
- 
-    specialCharacters = [" ",",",".",";","(",")","!","¡","¿","?","_","-","'","\""]
+
     with open('./staticFiles/' + txtFile, 'w') as f:
-        for i in range(len(text)):
-            if text[i] not in specialCharacters :
-                f.write(text[i].lower())
-            else:
-                f.write("\n")
+
+        for i in range(numPages):
+            currentPage = pdfReader.getPage(i)
+            text = currentPage.extractText()
+            for j in range(len(text)):
+                #print(text[j])
+                if text[j] not in specialCharacters:
+                    f.write(text[j].lower())
+                else:
+                    if text[j-1] not in specialCharacters:
+                        f.write("\n")
     
 
 def run_cmd(args_list):
@@ -37,38 +46,26 @@ def run_cmd(args_list):
         s_return =  proc.returncode
         return s_return, s_output, s_err 
 
-def loadIntoImpala():
+def loadIntoImpala(words):
     conn = connect(host = "172.17.0.2", port = 21050)
     cursor = conn.cursor()
 
-    # print(cursor.description)  # prints the result set's schema
-    # results = cursor.fetchall()
-
     cursor.execute("load data inpath 'hdfs://172.17.0.01:9000/tmp/csv/" + txtFile + "'" + " overwrite into table bd2.book ;") 
+
+    cursor.execute("select count(*) from bd2.book where word='"+words+"';")
+    countWords = {"word":cursor.next()[0]}
+
+    cursor.execute("select count(*) from bd2.book;")
+    totalWords = {"totalWords":cursor.next()[0]} 
 
     cursor.close()
     conn.close()
 
-def countWord():
-    conn = connect(host = "172.17.0.1", port = 21050)
-    cursor = conn.cursor()
+    return countWords | totalWords
 
-    cursor.execute("select count(*) from bd2.book where word='este';")
-    return {"word":cursor.next()[0]} 
 
-def countTotalWord():
-    result = countWord()
-
-    conn = connect(host = "172.17.0.1", port = 21050)
-    cursor = conn.cursor()
-
-    cursor.execute("select count(*) from bd2.book;")
-    return result | {"totalWords":cursor.next()[0]} 
-
-def saveHDFS(file):
+def interactBook(words,file):
     pdfToTxt(file)
     run_cmd(['hdfs', 'dfs', '-put', '/home/fabio/bd2-impala/Words-Finder/backend/src/staticFiles/' + txtFile, '/tmp/csv'])
-    loadIntoImpala()
-    countWord()
-    return countTotalWord()
+    return loadIntoImpala(words)
 
