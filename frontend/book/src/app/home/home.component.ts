@@ -4,7 +4,7 @@ import { RestService } from '../service/rest.service';
 
 interface Result {
   totalWords: any,
-  word: any
+  words: any
 }
 
 @Component({
@@ -19,9 +19,31 @@ export class HomeComponent implements OnInit {
   registerForm: any = FormGroup;
   public formGroup: FormGroup | any;
   submitted = false;
+
   constructor(private CS:RestService, private formBuilder: FormBuilder){}
+
   //Add user form actions
   get f() { return this.registerForm.controls; }
+
+  jsonToFinalResult(json: string){
+    let currentWord: string = ""
+    let finalString: string = "";
+    let specialCharaters = ["{","}",","];
+
+    for (let i = 1; i < json.length; i++) {
+
+      if(specialCharaters.includes(json[i]) && i !=0){
+        finalString += currentWord + " times.\n"
+        currentWord = ""
+      }
+      else{
+        currentWord += json[i]
+      }
+    }
+
+    return finalString
+  }
+
   onSubmit() {
     
     this.submitted = true;
@@ -37,11 +59,14 @@ export class HomeComponent implements OnInit {
       body.append('words', this.registerForm.value.myName);
       this.CS.interactBook(body).subscribe(res => {
         const result: Result = JSON.parse(JSON.stringify(res))
-        alert("Total words: "+ result.totalWords + "\n" + "Word " + "\"" + this.registerForm.value.myName + "\"" + " appeared: " + result.word + " times.")
+
+
+
+        alert("Total words: "+ result.totalWords + "\n" + 
+              "Words: \n" +  this.jsonToFinalResult(JSON.stringify(result.words)))
         window.location.reload();
       })
 
-      // alert("Great!!");
     }
   
   }
