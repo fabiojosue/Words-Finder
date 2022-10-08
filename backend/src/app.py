@@ -4,6 +4,7 @@ from flask_cors import CORS
 import controller
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/book', methods=['POST'])
 def createBook():

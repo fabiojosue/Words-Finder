@@ -1,16 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { RestService } from '../service/rest.service';
+
+interface Result {
+  totalWords: any,
+  word: any
+}
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
+
 export class HomeComponent implements OnInit {
   private fileTmp:any;
   //Form Validables 
   registerForm: any = FormGroup;
+  public formGroup: FormGroup | any;
   submitted = false;
   constructor(private CS:RestService, private formBuilder: FormBuilder){}
   //Add user form actions
@@ -25,7 +32,16 @@ export class HomeComponent implements OnInit {
     //True if all the fields are filled
     if(this.submitted)
     {
-      alert("Great!!");
+      const body = new FormData();
+      body.append('book', this.fileTmp.fileRaw);
+      body.append('words', this.registerForm.value.myName);
+      this.CS.interactBook(body).subscribe(res => {
+        const result: Result = JSON.parse(JSON.stringify(res))
+        alert("Total words: "+ result.totalWords + "\n" + "Word " + "\"" + this.registerForm.value.myName + "\"" + " appeared: " + result.word + " times.")
+        window.location.reload();
+      })
+
+      // alert("Great!!");
     }
   
   }
@@ -33,7 +49,7 @@ export class HomeComponent implements OnInit {
     //Add User form validations
     this.registerForm = this.formBuilder.group({
       imageInput: ['', [Validators.required]],
-      words: ''
+      myName: new FormControl()
     });
   }
   //file type validation
@@ -57,16 +73,6 @@ export class HomeComponent implements OnInit {
             this.registerForm.get('imageInput').updateValueAndValidity();
           }
       }
-  }
-
-  searchWords(word: string){
-    const body = new FormData();
-    if(this.fileTmp!=null){
-      body.append('file', this.fileTmp.fileRaw);
-      body.append('words', word);
-    }
-    // this.CS.createProduct(body).subscribe();
-    // window.location.reload();
   }
 
 }

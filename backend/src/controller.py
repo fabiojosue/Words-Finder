@@ -9,7 +9,10 @@ from impala.dbapi import connect
 # 2.Save file in HDFS
 # 3.Load HDFS file into Impala Table
 ####################################
+
 txtFile = 'currentBook.txt'
+
+# Function to convert a .pdf file into .txt
 
 def pdfToTxt(file):
     specialCharacters = [
@@ -18,11 +21,11 @@ def pdfToTxt(file):
                         "?","_","-","'","–",
                         "\"","\n","\t","•","”"
                         ]
+
     pdfReader = PyPDF2.PdfFileReader(open(file,'rb'))
     numPages = pdfReader.numPages
 
     with open('./staticFiles/' + txtFile, 'w') as f:
-
         for i in range(numPages):
             currentPage = pdfReader.getPage(i)
             text = currentPage.extractText()
@@ -34,6 +37,9 @@ def pdfToTxt(file):
                     if text[j-1] not in specialCharacters:
                         f.write("\n")
     
+# Function to run any Linux command in cmd
+# Implemented by Morteza Mashayekhi
+# @ https://stackoverflow.com/questions/26606128/how-to-save-a-file-in-hadoop-with-python
 
 def run_cmd(args_list):
         """
@@ -45,6 +51,9 @@ def run_cmd(args_list):
         s_output, s_err = proc.communicate()
         s_return =  proc.returncode
         return s_return, s_output, s_err 
+
+# Function to save the hdfs file data into impala table (1st cursor)
+# 2nd and 3rd cursor gets the data we looking for
 
 def loadIntoImpala(words):
     conn = connect(host = "172.17.0.2", port = 21050)
