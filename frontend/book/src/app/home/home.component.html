@@ -16,6 +16,9 @@
                   </div>
                   <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary"><h4>Search</h4></button>
+                    <div *ngIf="submitted" class="spinner-border spinner" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
                   </div>
                   
                 </form>

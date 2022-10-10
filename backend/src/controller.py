@@ -16,7 +16,7 @@ def pdfToTxt(file):
                         " ",",",".",":",";",
                         "(",")","!","¡","¿",
                         "?","_","-","'","–",
-                        "\"","\n","\t","•","”"
+                        "\"","\n","\t","•","”","—"
                         ]
 
     pdfReader = PyPDF2.PdfFileReader(open(file,'rb'))
@@ -27,7 +27,6 @@ def pdfToTxt(file):
             currentPage = pdfReader.getPage(i)
             text = currentPage.extractText()
             for j in range(len(text)):
-                #print(text[j])
                 if text[j] not in specialCharacters:
                     f.write(text[j].lower())
                 else:

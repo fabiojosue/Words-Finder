@@ -14,6 +14,7 @@ interface Result {
 })
 
 export class HomeComponent implements OnInit {
+  public loader = ""
   private fileTmp:any;
   //Form Validables 
   registerForm: any = FormGroup;
